@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}EchoCard{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-dark text-light">
+
+  <nav class="navbar navbar-dark bg-black border-bottom border-secondary">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="{% url 'home' %}">⚡ EchoCard</a>
+      <div class="d-flex gap-3">
+        <a href="{% url 'home' %}" class="nav-link text-light">Home</a>
+        <a href="{% url 'create_flashcards' %}" class="nav-link text-light">Flashcards</a>
+        <a href="{% url 'create_notes' %}" class="nav-link text-light">Notes</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+
+  <main class="container py-4">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="text-center py-3 border-top border-secondary mt-4">
+    <small class="text-secondary">EchoCard — Powered by Groq</small>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

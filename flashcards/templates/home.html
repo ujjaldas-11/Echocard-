@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Home — EchoCard{% endblock %}
+
+{% block content %}
+
+<h1 class="fw-bold mb-1">EchoCard</h1>
+<p class="text-secondary mb-4">Generate flashcards and notes from your text or PDF.</p>
+
+<div class="d-flex gap-2 mb-5">
+  <a href="{% url 'create_flashcards' %}" class="btn btn-primary">
+    + New Flashcard Deck
+  </a>
+  <a href="{% url 'create_notes' %}" class="btn btn-outline-light">
+    + New Note
+  </a>
+</div>
+
+<hr class="border-secondary"/>
+
+<!-- Decks -->
+<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+  <h4 class="fw-bold mb-0">Flashcard Decks</h4>
+  <a href="{% url 'create_flashcards' %}" class="btn btn-sm btn-primary">+ New</a>
+</div>
+
+{% if decks %}
+  <div class="row g-3 mb-5">
+    {% for deck in decks %}
+    <div class="col-md-6 col-lg-4">
+      <a href="{% url 'view_deck' deck.pk %}" class="text-decoration-none">
+        <div class="card bg-black border-secondary text-light h-100">
+          <div class="card-body">
+            <h6 class="card-title fw-bold">{{ deck.title }}</h6>
+            <p class="card-text text-secondary mb-1">
+              {{ deck.card_count }} cards
+            </p>
+            <small class="text-secondary">{{ deck.created_at|timesince }} ago</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-secondary mb-5">
+    No decks yet.
+    <a href="{% url 'create_flashcards' %}">Create your first deck.</a>
+  </div>
+{% endif %}
+
+<hr class="border-secondary"/>
+
+<!-- Notes -->
+<div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+  <h4 class="fw-bold mb-0">Study Notes</h4>
+  <a href="{% url 'create_notes' %}" class="btn btn-sm btn-outline-light">+ New</a>
+</div>
+
+{% if notes %}
+  <div class="row g-3">
+    {% for note in notes %}
+    <div class="col-md-6 col-lg-4">
+      <a href="{% url 'view_note' note.pk %}" class="text-decoration-none">
+        <div class="card bg-black border-secondary text-light h-100">
+          <div class="card-body">
+            <h6 class="card-title fw-bold">{{ note.title }}</h6>
+            {% if note.summary %}
+              <p class="card-text text-secondary" style="font-size: 0.85rem;">
+                {{ note.summary|truncatechars:80 }}
+              </p>
+            {% endif %}
+            <small class="text-secondary">{{ note.created_at|timesince }} ago</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-secondary">
+    No notes yet.
+    <a href="{% url 'create_notes' %}">Create your first note.</a>
+  </div>
+{% endif %}
+
+{% endblock %}

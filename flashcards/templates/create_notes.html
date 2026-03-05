@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Notes — EchoCard{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'home' %}" class="text-secondary text-decoration-none">← Back</a>
+
+<h2 class="fw-bold mt-3 mb-1">Generate Notes</h2>
+<p class="text-secondary mb-4">Paste text or upload a PDF to get a summary and key points.</p>
+
+<div class="col-md-8">
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">{{ error }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Title -->
+    <div class="mb-3">
+      <label class="form-label">Note Title</label>
+      {{ form.title }}
+      {% if form.title.errors %}
+        <div class="text-danger small">{{ form.title.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <!-- Text -->
+    <div class="mb-3">
+      <label class="form-label">Paste Text</label>
+      {{ form.text }}
+      {% if form.text.errors %}
+        <div class="text-danger small">{{ form.text.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <!-- PDF -->
+    <div class="mb-3">
+      <label class="form-label">Or Upload PDF</label>
+      <input type="file" name="pdf_file" accept=".pdf" class="form-control"/>
+      {% if form.pdf_file.errors %}
+        <div class="text-danger small">{{ form.pdf_file.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">
+      Generate Notes
+    </button>
+
+  </form>
+</div>
+
+{% endblock %}

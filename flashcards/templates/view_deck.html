@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ deck.title }} — EchoCard{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'home' %}" class="text-secondary text-decoration-none">← Back</a>
+
+<div class="d-flex justify-content-between align-items-start mt-3 mb-4">
+  <div>
+    <h2 class="fw-bold mb-1">{{ deck.title }}</h2>
+    <small class="text-secondary">{{ cards.count }} cards · {{ deck.created_at|timesince }} ago</small>
+  </div>
+  <form method="POST" action="{% url 'delete_deck' deck.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-sm btn-outline-danger"
+            onclick="return confirm('Delete this deck?')">
+      Delete
+    </button>
+  </form>
+</div>
+
+{% for card in cards %}
+<div class="card bg-black border-secondary text-light mb-3">
+  <div class="card-body">
+    <p class="text-secondary small mb-1">Card {{ forloop.counter }}</p>
+    <h6 class="fw-bold mb-2">Q: {{ card.question }}</h6>
+    <hr class="border-secondary my-2"/>
+    <p class="mb-0 text-secondary">A: {{ card.answer }}</p>
+  </div>
+</div>
+{% endfor %}
+
+<div class="d-flex gap-2 mt-4">
+  <a href="{% url 'create_flashcards' %}" class="btn btn-primary">+ New Deck</a>
+  <a href="{% url 'home' %}" class="btn btn-outline-light">Home</a>
+</div>
+
+{% endblock %}
