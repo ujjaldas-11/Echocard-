@@ -1,5 +1,6 @@
 from django import forms
-
+from django.contrib.auth.models import User
+from django.contrib import messages
 
 class FlashcardForm(forms.Form):
     title = forms.CharField(
@@ -28,15 +29,6 @@ class FlashcardForm(forms.Form):
             # 'id': 'pdf-file',
         }) 
     )
-
-    # num_cards = forms.IntegerField(
-    #     min_value=1,
-    #     max_value=20,
-    #     initial=5,
-    #     widget=forms.HiddenInput(attrs={
-    #         'id': 'num-cards-input',
-    #     })
-    # )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -151,3 +143,5 @@ class EditNoteForm(forms.Form):
         if not title:
             raise forms.ValidationError('Title required.')
         return title
+
+    

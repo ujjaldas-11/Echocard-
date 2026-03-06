@@ -44,7 +44,7 @@ class Flashcard(models.Model):
 
     
 class Note(models.Model):
-    User = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='notes',

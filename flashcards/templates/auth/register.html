@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Register — EchoCard{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+  <div class="col-md-4">
+
+    <div class="text-center mb-4">
+      <h2 class="fw-bold">⚡ EchoCard</h2>
+      <p class="text-secondary">Create your account</p>
+    </div>
+
+    <div class="card bg-black border-secondary">
+      <div class="card-body p-4">
+
+        <form method="POST">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+              <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
+
+          <div class="mb-3">
+            <label class="form-label text-secondary">Username</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+              <small class="text-danger">{{ form.username.errors.0 }}</small>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+              <small class="text-danger">{{ form.email.errors.0 }}</small>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary">Password</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+              <small class="text-danger">{{ form.password.errors.0 }}</small>
+            {% endif %}
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-secondary">Confirm Password</label>
+            {{ form.confirm_password }}
+            {% if form.confirm_password.errors %}
+              <small class="text-danger">{{ form.confirm_password.errors.0 }}</small>
+            {% endif %}
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">
+            Create Account
+          </button>
+
+        </form>
+
+      </div>
+    </div>
+
+    <p class="text-center text-secondary mt-3">
+      Already have an account?
+      <a href="{% url 'login' %}" class="text-primary">Login</a>
+    </p>
+
+  </div>
+</div>
+
+{% endblock %}

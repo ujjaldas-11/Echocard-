@@ -1,29 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}EchoCard{% endblock %}</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
+
 <body class="bg-dark text-light">
 
   <nav class="navbar navbar-dark bg-black border-bottom border-secondary">
     <div class="container">
       <a class="navbar-brand fw-bold" href="{% url 'home' %}">⚡ EchoCard</a>
-      <div class="d-flex gap-3">
-        <a href="{% url 'home' %}" class="nav-link text-light">Home</a>
-        <a href="{% url 'create_flashcards' %}" class="nav-link text-light">Flashcards</a>
-        <a href="{% url 'create_notes' %}" class="nav-link text-light">Notes</a>
-      </div>
+      <ul class="d-flex gap-3">
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+            href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'create_flashcards' %}active{% endif %}"
+            href="{% url 'create_flashcards' %}">Flashcards</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'create_notes' %}active{% endif %}"
+            href="{% url 'create_notes' %}">Notes</a>
+        </li>
+        <li class="nav-item">
+          <span class="nav-link text-secondary">
+            👤 {{ user.username }}
+          </span>
+        </li>
+        <li class="nav-item">
+          <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+              Logout
+            </button>
+          </form>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-sm btn-primary" href="{% url 'register' %}">Register</a>
+        </li>
+        {% endif %}
+      </ul>
     </div>
   </nav>
 
   <div class="container mt-3">
     {% for message in messages %}
-      <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
-        {{ message }}
-      </div>
+    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+      {{ message }}
+    </div>
     {% endfor %}
   </div>
 
@@ -37,4 +70,5 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 # flashcards/views.py
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Deck, Flashcard, Note
 from .forms import FlashcardForm, NoteForm, EditDeckForm, EditNoteForm
@@ -9,22 +10,24 @@ from .ai_service import (
     extract_text_from_pdf
 )
 
-
+@login_required
 def home(request):
     query = request.GET.get('q', '').strip()
+    decks = Deck.objects.filter(user=request.user)
+    notes = Note.objects.filter(user=request.user)
 
-    decks = Deck.objects.all()
-    notes = Note.objects.all()
-    if query :
-        decks = decks.filter(title__icontains=query) 
+    if query:
+        decks = decks.filter(title__icontains=query)
         notes = notes.filter(title__icontains=query)
+
     return render(request, 'home.html', {
         'decks': decks,
         'notes': notes,
         'query': query,
     })
 
-
+    
+@login_required
 def create_flashcards(request):
     if request.method == 'POST':
         form = FlashcardForm(request.POST, request.FILES)
@@ -50,7 +53,7 @@ def create_flashcards(request):
 
             try:
                 cards_data = generate_flashcards(text, num_cards)
-                deck = Deck.objects.create(title=title)
+                deck = Deck.objects.create(user=request.user,title=title)
                 for card in cards_data:
                     Flashcard.objects.create(
                         deck=deck,
@@ -73,18 +76,18 @@ def create_flashcards(request):
 # def edit_falshcards(request):
 
 
-
+@login_required
 def view_deck(request, pk):
-    deck  = get_object_or_404(Deck, pk=pk)
-    cards = deck.cards.all()
+    deck  = get_object_or_404(Deck, pk=pk, user=request.user)
+    cards = deck.cards.filter()
     return render(request, 'view_deck.html', {
         'deck': deck,
         'cards': cards
     })
 
-
+@login_required
 def edit_deck(request, pk):
-    deck = get_object_or_404(Deck, pk=pk)
+    deck = get_object_or_404(Deck, pk=pk, user=request.user)
     if request.method == 'POST':
         form = EditDeckForm(request.POST)
         if form.is_valid():
@@ -97,14 +100,17 @@ def edit_deck(request, pk):
 
     return render(request,'edit_deck.html', {'form': form, 'deck': deck})
 
+
+@login_required
 def delete_deck(request, pk):
-    deck = get_object_or_404(Deck, pk=pk)
+    deck = get_object_or_404(Deck, pk=pk, user=request.user)
     if request.method == 'POST':
         deck.delete()
         messages.success(request, 'Deck deleted.')
     return redirect('home')
 
 
+@login_required
 def create_notes(request):
     if request.method == 'POST':
         form = NoteForm(request.POST, request.FILES)
@@ -127,6 +133,7 @@ def create_notes(request):
                     f'• {point}' for point in result['key_points']
                 )
                 note = Note.objects.create(
+                    user=request.user,
                     title=title,
                     original_text=text,
                     summary=result['summary'],
@@ -144,15 +151,18 @@ def create_notes(request):
     return render(request, 'create_notes.html', {'form': form})
 
 
+@login_required
 def view_note(request, pk):
-    note = get_object_or_404(Note, pk=pk)
+    note = get_object_or_404(Note, pk=pk, user=request.user)
     return render(request, 'view_note.html', {
         'note': note,
         'key_points': note.key_points_list()
     })
 
+
+@login_required
 def edit_note(request, pk):
-    note = get_object_or_404(Note, pk=pk)
+    note = get_object_or_404(Note, pk=pk, user=request.user)
     if request.method == 'POST':
         form = EditNoteForm(request.POST)
         if form.is_valid():
@@ -166,9 +176,9 @@ def edit_note(request, pk):
     return render(request, 'edit_note.html',{'form': form, 'note': note})
 
 
-
+@login_required
 def delete_note(request, pk):
-    note = get_object_or_404(Note, pk=pk)
+    note = get_object_or_404(Note, pk=pk, user=request.user)
     if request.method == 'POST':
         note.delete()
         messages.success(request, 'Note deleted.')
