@@ -5,22 +5,25 @@
 {% block content %}
 
 <a href="{% url 'home' %}" class="text-secondary text-decoration-none">← Back</a>
-<a href="{% url 'edit_note' note.pk %}" class="btn btn-sm btn-outline-secondary">
-  Edit Title
-</a>
 
 <div class="d-flex justify-content-between align-items-start mt-3 mb-4">
   <div>
     <h2 class="fw-bold mb-1">{{ note.title }}</h2>
     <small class="text-secondary">{{ note.created_at|timesince }} ago</small>
   </div>
-  <form method="POST" action="{% url 'delete_note' note.pk %}">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-sm btn-outline-danger"
-            onclick="return confirm('Delete this note?')">
+  <div class="d-flex gap-2">
+    <a href="{% url 'edit_note' note.pk %}" class="btn btn-sm btn-primary">
+      Edit Title
+    </a>
+
+    <form method="POST" action="{% url 'delete_note' note.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-sm btn-outline-danger"
+      onclick="return confirm('Delete this note?')">
       Delete
     </button>
   </form>
+</div>
 </div>
 
 <!-- Summary -->

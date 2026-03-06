@@ -89,7 +89,7 @@ def generate_flashcards(text: str, num_cards: int = 5) -> list[dict]:
         if "question" in card and "answer" in card:
             validated.append({
                 "question": card["question"].strip(),
-                "answer": card["answer"].strip()
+                "answer": card["answer"]
             })
 
     if not validated:

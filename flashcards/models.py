@@ -1,6 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Deck(models.Model):
+    user = models.ForeignKey(               
+        User,
+        on_delete=models.CASCADE,
+        related_name='decks',
+        null=True,
+        blank=True
+    )
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -36,6 +44,13 @@ class Flashcard(models.Model):
 
     
 class Note(models.Model):
+    User = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='notes',
+        null=True,
+        blank=True
+    )
     title = models.CharField(max_length=200)
     original_text = models.TextField()
     summary = models.TextField(blank=True)
