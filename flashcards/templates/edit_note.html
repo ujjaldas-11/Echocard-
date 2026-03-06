@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Edit Note — EchoCard{% endblock %}
+{% block content %}
+
+<a href="{% url 'view_note' note.pk %}" class="text-secondary text-decoration-none">← Back</a>
+
+<h2 class="fw-bold mt-3 mb-1">Edit Note Title</h2>
+<p class="text-secondary mb-4">Current title: <strong>{{ note.title }}</strong></p>
+
+<div class="col-md-6">
+  <form method="POST">
+    {% csrf_token %}
+    {% if form.title.errors %}
+      <div class="alert alert-danger">{{ form.title.errors.0 }}</div>
+    {% endif %}
+    <div class="mb-3">
+      <label class="form-label">New Title</label>
+      {{ form.title }}
+    </div>
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a href="{% url 'view_note' note.pk %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

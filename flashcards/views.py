@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Deck, Flashcard, Note
-from .forms import FlashcardForm, NoteForm
+from .forms import FlashcardForm, NoteForm, EditDeckForm, EditNoteForm
 from .ai_service import (
     generate_flashcards,
     generate_notes,
@@ -11,11 +11,17 @@ from .ai_service import (
 
 
 def home(request):
+    query = request.GET.get('q', '').strip()
+
     decks = Deck.objects.all()
     notes = Note.objects.all()
+    if query :
+        decks = decks.filter(title__icontains=query) 
+        notes = notes.filter(title__icontains=query)
     return render(request, 'home.html', {
         'decks': decks,
-        'notes': notes
+        'notes': notes,
+        'query': query,
     })
 
 
@@ -24,11 +30,17 @@ def create_flashcards(request):
         form = FlashcardForm(request.POST, request.FILES)
         if form.is_valid():
             title     = form.cleaned_data['title']
-            text      = form.cleaned_data['text']
+            text      = form.cleaned_data.get('text', '') or ''
             pdf_file  = form.cleaned_data['pdf_file']
-            num_cards = form.cleaned_data['num_cards']
+            # num_cards = form.cleaned_data['num_cards']
 
-            # PDF takes priority
+            try:
+                num_cards = int(request.POST.get('num_cards', 5))
+                num_cards =  max(1, min(20, num_cards))
+            except (ValueError, TypeError):
+                num_cards = 5
+
+
             if pdf_file:
                 try:
                     text = extract_text_from_pdf(pdf_file)
@@ -52,9 +64,14 @@ def create_flashcards(request):
                 form.add_error(None, f'Generation failed: {str(e)}')
 
     else:
-        form = FlashcardForm(initial={'num_cards': 5})
+        form = FlashcardForm()
 
     return render(request, 'create_flashcards.html', {'form': form})
+
+
+
+# def edit_falshcards(request):
+
 
 
 def view_deck(request, pk):
@@ -65,6 +82,20 @@ def view_deck(request, pk):
         'cards': cards
     })
 
+
+def edit_deck(request, pk):
+    deck = get_object_or_404(Deck, pk=pk)
+    if request.method == 'POST':
+        form = EditDeckForm(request.POST)
+        if form.is_valid():
+            deck.title = form.cleaned_data['title']
+            deck.save()
+            messages.success(request, 'Deck Title Edited successfully.')
+        return redirect('view_deck', pk=deck.pk)
+    else:
+        form = EditDeckForm(initial={'title': deck.title})
+
+    return render(request,'edit_deck.html', {'form': form, 'deck': deck})
 
 def delete_deck(request, pk):
     deck = get_object_or_404(Deck, pk=pk)
@@ -79,7 +110,7 @@ def create_notes(request):
         form = NoteForm(request.POST, request.FILES)
         if form.is_valid():
             title    = form.cleaned_data['title']
-            text     = form.cleaned_data['text']
+            text     = form.cleaned_data.get('text', '') or ''
             pdf_file = form.cleaned_data['pdf_file']
 
             # PDF takes priority
@@ -119,6 +150,21 @@ def view_note(request, pk):
         'note': note,
         'key_points': note.key_points_list()
     })
+
+def edit_note(request, pk):
+    note = get_object_or_404(Note, pk=pk)
+    if request.method == 'POST':
+        form = EditNoteForm(request.POST)
+        if form.is_valid():
+            note.title = form.cleaned_data['title']
+            note.save()
+            messages.success(request, 'Note title edited successfullty.')
+            return redirect('view_note', pk=note.pk)
+    else:
+        form = EditNoteForm(initial={'title': note.title})
+    
+    return render(request, 'edit_note.html',{'form': form, 'note': note})
+
 
 
 def delete_note(request, pk):

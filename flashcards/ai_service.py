@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-MODEL = 'llama-3.1-8b-instant'
+MODEL = 'llama-3.3-70b-versatile'
 
 def _run_groq(prompt: str, max_tokens: int = 1024 ) -> str:
     try:
@@ -51,28 +51,40 @@ def _safe_parse_json(raw: str):
 
 
 def generate_flashcards(text: str, num_cards: int = 5) -> list[dict]:
+
     prompt = f"""
-        Generate exactly {num_cards} flashcards from the text below.
-        Each flashcard must have a clear question and a concise answer.
+    You are an expert flashcard creator specializing in active recall and spaced repetition.
 
-        Return ONLY a JSON array in this exact format:
-        [
-        {{"question": "What is ...?", "answer": "..."}},
-        {{"question": "...", "answer": "..."}}
-        ]
+    Your task is to generate EXACTLY {num_cards} flashcards from the text below.
 
-        Text:
-        {text[:6000]}
-        """
+    Rules:
+    - Generate EXACTLY {num_cards} cards — not more, not less
+    - One clear idea per card
+    - Question: specific, clear, no answer leakage
+    - Answer: concise and precise, use bullet points if listing multiple points
+    - Cover the most important concepts, definitions, facts, and relationships in the text
 
+    Return ONLY a valid JSON array with EXACTLY {num_cards} objects.
+    Each object must have exactly two keys: "question" and "answer".
+
+    Example format:
+    [
+    {{"question": "What is photosynthesis?", "answer": "The process by which plants convert sunlight, water and CO2 into glucose and oxygen."}},
+    {{"question": "What are the two stages of photosynthesis?", "answer": "1. Light-dependent reactions\\n2. Light-independent reactions (Calvin cycle)"}}
+    ]
+
+    Text:
+    {text[:6000]}
+
+    Remember: Return EXACTLY {num_cards} flashcards. Output ONLY the JSON array, nothing else.
+    """
     raw = _run_groq(prompt)
     cards = _safe_parse_json(raw)
 
     if not isinstance(cards, list):
-        raise ValueError('Expected a JSON array of Flashcards')
-    
-    validated = []
+        raise ValueError("Expected a JSON array of flashcards.")
 
+    validated = []
     for card in cards:
         if "question" in card and "answer" in card:
             validated.append({
@@ -80,30 +92,44 @@ def generate_flashcards(text: str, num_cards: int = 5) -> list[dict]:
                 "answer": card["answer"].strip()
             })
 
-        if not validated:
-            raise ValueError("No valid flashcard were generated.")
-        
-        return validated
+    if not validated:
+        raise ValueError("No valid flashcards were generated.")
 
+    return validated
 
 
 def generate_notes(text: str) -> dict:
+    
     prompt = f"""
-        Analyze the text below and extract structured study notes.
+        You are an expert study assistant specializing in summarization and knowledge extraction.
 
-        Return ONLY a JSON object in this exact format:
+        Your task is to analyze the text below and extract structured study notes.
+
+        Rules:
+        - Summary: 2-3 clear sentences covering the main topic
+        - Key points: exactly 5 most important concepts, facts, or ideas
+        - Each key point must be a complete, standalone sentence
+        - Be precise and academic in tone
+
+        Return ONLY a valid JSON object with exactly two keys: "summary" and "key_points".
+
+        Example format:
         {{
-        "summary": "A clear 2-3 sentence summary of the main topic.",
+        "summary": "This text covers the water cycle and its importance to Earth's ecosystem.",
         "key_points": [
-            "Key point 1",
-            "Key point 2",
-            "Key point 3",
-            "Key point 4",
-            "Key point 5"
+            "Water evaporates from oceans and lakes due to solar energy.",
+            "Water vapor condenses in the atmosphere to form clouds.",
+            "Precipitation returns water to the Earth's surface as rain or snow.",
+            "Groundwater is formed when water soaks into the soil and rock layers.",
+            "The water cycle distributes fresh water across the planet continuously."
         ]
         }}
+
         Text:
         {text[:6000]}
+
+        Output ONLY the JSON object, nothing else.
+
         """
 
     raw = _run_groq(prompt)

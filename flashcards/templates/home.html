@@ -16,6 +16,28 @@
   </a>
 </div>
 
+<form method="GET" action="{% url 'home' %}" class="mb-4">
+  {% csrf_token %}
+  <div class="d-flex gap-2">
+    <div class="input-group" style="max-width: 400px;">
+      <input class="form-control bg-dark text-light border-secondary" type="text" name="q" value="{{query}}" placeholder="Search decks and notes ...">
+    </div>
+    <button class="btn btn-primary" type="submit">Search</button>
+  </div>
+  {% if query %}
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary">Clear</a>
+  {% endif %}
+</form>
+
+
+{% if query %}
+  <p class="text-secondary mb-3">
+    result for "<strong>{{ query }}</strong>"-
+    {{decks.count}} decks{{decks.count | pluralize}}
+    {{notes.count}} notes{{notes.count | pluralize}}
+  </p>
+{% endif %}
+
 <hr class="border-secondary"/>
 
 <!-- Decks -->
