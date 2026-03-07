@@ -33,13 +33,15 @@ DEBUG =  TrueDEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1',
+    '127.0.0.1',    
     '.railway.app',
+    'echocard-production.up.railway.app',
     os.getenv('RAILWAY_STATIC_URL', ''),
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://*.railway.app',       
+    'https://*.railway.app',
+    'echocard-production.up.railway.app',       
     'http://localhost:8000',
     'http://127.0.0.1:8000',
 ]
