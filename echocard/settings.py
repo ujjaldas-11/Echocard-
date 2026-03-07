@@ -41,7 +41,7 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',
-    'echocard-production.up.railway.app',       
+    'https://echocard-production.up.railway.app',       
     'http://localhost:8000',
     'http://127.0.0.1:8000',
 ]
@@ -163,7 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [BASE_DIR / 'static'] if os.path.isdir(BASE_DIR / 'static') else []
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
