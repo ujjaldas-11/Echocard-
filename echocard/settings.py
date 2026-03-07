@@ -35,12 +35,14 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',    
     '.railway.app',
+    '.onrender.com',
     'echocard-production.up.railway.app',
     os.getenv('RAILWAY_STATIC_URL', ''),
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',
+    'https://*.onrender.com',
     'https://echocard-production.up.railway.app',       
     'http://localhost:8000',
     'http://127.0.0.1:8000',
