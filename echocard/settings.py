@@ -28,17 +28,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG =  True
+DEBUG =  TrueDEBUG = os.getenv('DEBUG', 'False') == 'True'
+
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '.railwayapp',
+    '.railway.app',
     os.getenv('RAILWAY_STATIC_URL', ''),
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://echocard-production.up.railway.app',       
+    'https://*.railway.app',       
     'http://localhost:8000',
     'http://127.0.0.1:8000',
 ]
@@ -162,7 +163,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 STORAGES = {
