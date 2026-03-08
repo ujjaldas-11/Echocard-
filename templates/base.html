@@ -13,42 +13,33 @@
   <nav class="navbar navbar-dark bg-black border-bottom border-secondary">
     <div class="container">
       <a class="navbar-brand fw-bold" href="{% url 'home' %}">⚡ EchoCard</a>
-      <ul class="d-flex gap-3">
+      <div class="d-flex gap-4">
         {% if user.is_authenticated %}
-        <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
             href="{% url 'home' %}">Home</a>
-        </li>
-        <li class="nav-item">
+
           <a class="nav-link {% if request.resolver_match.url_name == 'create_flashcards' %}active{% endif %}"
             href="{% url 'create_flashcards' %}">Flashcards</a>
-        </li>
-        <li class="nav-item">
+
           <a class="nav-link {% if request.resolver_match.url_name == 'create_notes' %}active{% endif %}"
             href="{% url 'create_notes' %}">Notes</a>
-        </li>
-        <li class="nav-item">
+
           <span class="nav-link text-secondary">
             👤 {{ user.username }}
           </span>
-        </li>
-        <li class="nav-item">
+
           <form method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline-secondary">
+            <button type="submit" class="btn btn-sm btn-outline-danger">
               Logout
             </button>
           </form>
-        </li>
         {% else %}
-        <li class="nav-item">
           <a class="nav-link" href="{% url 'login' %}">Login</a>
-        </li>
-        <li class="nav-item">
+
           <a class="btn btn-sm btn-primary" href="{% url 'register' %}">Register</a>
-        </li>
         {% endif %}
-      </ul>
+      </div>
     </div>
   </nav>
 
