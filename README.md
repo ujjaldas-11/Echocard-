@@ -8,21 +8,6 @@
 [![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](LICENSE)
 [![Live](https://img.shields.io/badge/Live-echocard.onrender.com-brightgreen?style=flat-square)](https://echocard.onrender.com)
 
----
-
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [Database Setup](#-database-setup)
-- [Running the App](#-running-the-app)
-- [API Documentation](#-api-documentation)
-- [Deployment](#-deployment)
-- [Screenshots](#-screenshots)
 
 ---
 
